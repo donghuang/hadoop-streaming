@@ -1,0 +1,89 @@
+#===========streaming 开发===============
+hadoop jar /home/hadoop/hadoop-1.2.1/contrib/streaming/hadoop-streaming-1.2.1.jar \
+-input   $INPUT \
+-output  $OUTPUT \
+-mapper 'python mapper.py' \
+-reducer reducer \
+-file mapper.py 
+
+
+mapred.job.name作业名
+mapred.job.priority作业优先级
+mapred.job.map.capacity最多同时运行map任务数
+mapred.job.reduce.capacity最多同时运行reduce任务数
+hadoop.job.ugi作业执行权限
+mapred.map.tasksmap任务个数
+mapred.reduce.tasksreduce任务个数
+mapred.job.groups作业可运行的计算节点分组
+mapred.task.timeout任务没有响应（输入输出）的最大时间
+mapred.compress.map.outputmap的输出是否压缩
+mapred.map.output.compression.codecmap的输出压缩方式
+mapred.output.compressreduce的输出是否压缩
+mapred.output.compression.codecreduce的输出压缩方式
+stream.map.output.field.separatormap输出分隔符
+#-jobconf mapred.map.tasks=10 \
+#-jobconf mapred.reduce.tasks=5 \
+#-jobconf mapred.job.map.capacity=10 \
+#-jobconf mapred.job.reduce.capacity=5 \
+#二次排序
+#-jobconf map.output.key.field.separator=. \ #改变map输出中key和value的分隔符
+#-jobconf stream.num.map.output.key.fields=2 \ #指定在第二个分隔符处进行分隔，也就是第二个分隔符之前的作为key，之后的作为value。
+#-jobconf num.key.fields.for.partition=2 \ #指定将key分隔出来的前两个部分而不是整个key用于Partitioner做partition
+#-partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
+
+#三种文件分发方式的区别：
+   -file将客户端本地文件打成jar包上传到HDFS然后分发到计算节点，
+   -cacheFile将HDFS文件分发到计算节点，
+   -cacheArchive将HDFS压缩文件分发到计算节点并解压。
+#-cacheArchive "/share/python26.tar.gz#python26"
+
+Streaming开发过程中需要注意的几个方面：
+A.Mapper程序：对输入key/value数据进行处理；
+B.Reducer程序：对mapper的输出进行归并处理；
+C.Combiner：在本地对一个计算节点上的mapper输出进行归并
+D.Partitioner：将mapper的输出分配到reducer
+E.InputFormat/OutputFormat：对输入数据进行切分，保存输出数据
+
+#===========aggregate ==================
+1. aggregate概述
+aggregate是Hadoop提供的一个软件包，其用来做一些通用的计算和聚合。在Streaming中通常使用Aggregate包作为reducer来做聚合统计。
+
+2. aggregate class summary
+DoubleValueSun 一个 double 值序列的和
+LongValueMax 一个 long 序列的最大值
+LongValueMin 一个 long 序列的最小值
+LongValueSum 一个 long 序列的和
+StringValueMax 一个字符串序列的字母排序的最大值
+StringValueMin 一个字符串序列的字母排序的最小值
+UniqValueCount 每个键的唯一值的个数
+ValueHistogram 求每个值的:个数,最小值,中间值,平均值,最大值,标准方差
+UserDefinedValueAggregatorDescriptor    This class implements a wrapper for a user defined value aggregator descriptor.
+ValueAggregatorBaseDescriptor           This class implements the common functionalities of the subclasses of ValueAggregatorDescriptor class.
+ValueAggregatorCombiner<K1 extends WritableComparable,V1 extends Writable>    This class implements the generic combiner of Aggregate.
+ValueAggregatorJob                                                            This is the main class for creating a map/reduce job using Aggregate framework.
+ValueAggregatorJobBase<K1 extends WritableComparable,V1 extends Writable>     This abstract class implements some common functionalities of the the generic mapper, reducer and combiner classes of Aggregate.
+ValueAggregatorMapper<K1 extends WritableComparable,V1 extends Writable>      This class implements the generic mapper of Aggregate.
+ValueAggregatorReducer<K1 extends WritableComparable,V1 extends Writable>     This class implements the generic reducer of Aggregate.
+
+
+3. streaming中使用aggregate
+在mapper任务的输出中添加控制，如下：
+function：key\tvalue
+eg：LongValueSum：key\tvalue
+同时，置-reducer = aggregate。
+此时，Reducer使用aggregate中对应的function类对相同key的value进行操作，
+例如，设置function为LongValueSum则将对每个键值对应的value求和。
+
+
+4.ValueHistogram是aggregate package中最强大的类，基于每个键，对其value做以下统计
+1）唯一值个数
+2）最小值个数
+3）中位置个数
+4）最大值个数
+5）平均值个数
+6）标准方差
+
+
+
+
+
