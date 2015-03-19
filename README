@@ -21,23 +21,24 @@ mapred.map.output.compression.codecmap的输出压缩方式
 mapred.output.compressreduce的输出是否压缩
 mapred.output.compression.codecreduce的输出压缩方式
 stream.map.output.field.separatormap输出分隔符
-#-jobconf mapred.map.tasks=10 \
-#-jobconf mapred.reduce.tasks=5 \
-#-jobconf mapred.job.map.capacity=10 \
-#-jobconf mapred.job.reduce.capacity=5 \
+-jobconf mapred.map.tasks=10 
+-jobconf mapred.reduce.tasks=5 
+-jobconf mapred.job.map.capacity=10 
+-jobconf mapred.job.reduce.capacity=5 
+
 #二次排序
-#-jobconf map.output.key.field.separator=. \ #改变map输出中key和value的分隔符
-#-jobconf stream.num.map.output.key.fields=2 \ #指定在第二个分隔符处进行分隔，也就是第二个分隔符之前的作为key，之后的作为value。
-#-jobconf num.key.fields.for.partition=2 \ #指定将key分隔出来的前两个部分而不是整个key用于Partitioner做partition
-#-partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
+-jobconf map.output.key.field.separator=. \ #改变map输出中key和value的分隔符
+-jobconf stream.num.map.output.key.fields=2 \ #指定在第二个分隔符处进行分隔，也就是第二个分隔符之前的作为key，之后的作为value。
+-jobconf num.key.fields.for.partition=2 \ #指定将key分隔出来的前两个部分而不是整个key用于Partitioner做partition
+-partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
 
 #三种文件分发方式的区别：
-   -file将客户端本地文件打成jar包上传到HDFS然后分发到计算节点，
-   -cacheFile将HDFS文件分发到计算节点，
-   -cacheArchive将HDFS压缩文件分发到计算节点并解压。
-#-cacheArchive "/share/python26.tar.gz#python26"
+-file将客户端本地文件打成jar包上传到HDFS然后分发到计算节点，
+-cacheFile将HDFS文件分发到计算节点，
+-cacheArchive将HDFS压缩文件分发到计算节点并解压。
 
-Streaming开发过程中需要注意的几个方面：
+
+#Streaming开发过程中需要注意的几个方面：
 A.Mapper程序：对输入key/value数据进行处理；
 B.Reducer程序：对mapper的输出进行归并处理；
 C.Combiner：在本地对一个计算节点上的mapper输出进行归并
