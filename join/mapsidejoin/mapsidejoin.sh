@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ETL_DATE=20140101
+ETL_DATE=20150301
 OUTPUT="$ETL_DATE/`basename $0`"
 
 hadoop fs -test -d $ETL_DATE 2>&1 2>/dev/null
@@ -28,3 +28,5 @@ hadoop jar /home/hadoop/hadoop-1.2.1/contrib/streaming/hadoop-streaming-1.2.1.ja
 
 #指定在第二个分隔符处进行分隔，也就是第二个分隔符之前的作为key，之后的作为value。streaming 会按照key自动排序
 #-jobconf stream.num.map.output.key.fields=2 
+
+[ $? -eq 0 ] && echo "返回[$?]:执行成功" || echo "返回[$?]:执行失败"

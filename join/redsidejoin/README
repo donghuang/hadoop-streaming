@@ -1,9 +1,0 @@
-Reduce side join是一种最简单的join方式，其主要思想如下：
-
-在map阶段，map函数同时读取两个文件File1和File2，为了区分两种来源的key/value数据对，对每条数据打一个标签（tag）,
-比如：tag=0表示来自文件File1，tag=2表示来自文件File2。即：map阶段的主要任务是对不同文件中的数据打标签。
-
-在reduce阶段，reduce函数获取key相同的来自File1和File2文件的value list，
-然后对于同一个key，对File1和File2中的数据进行join（笛卡尔乘积）。即：reduce阶段进行实际的连接操作。
-
-Reduce side join是非常低效的，因为shuffle阶段要进行大量的数据传输。

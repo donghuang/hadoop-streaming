@@ -26,7 +26,7 @@ for line in sys.stdin:
 			flg=1
 			continue
 	if flg==0:
-		print "Unknow Country","\t",fields[1],"\t",1
+		print "Unknown Country","\t",fields[1],"\t",1
 		
 	#移动到数据文件开始位置
 	f.seek(0,0)
